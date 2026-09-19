@@ -15,6 +15,7 @@ from src.main import (
     MODULE_OPERATIONS,
     MODULE_TITLES,
     calculate,
+    draw_graph,
 )
 
 
@@ -23,7 +24,7 @@ class TestMainIntegration(unittest.TestCase):
 
     def test_all_modules_have_calculators_and_titles(self):
         self.assertEqual(
-            set(CALCULATORS), {"Module A", "Module B", "Module C"})
+            set(CALCULATORS), {"Module A", "Module B", "Module C", "Module D"})
         self.assertEqual(
             set(MODULE_TITLES), set(CALCULATORS))
         self.assertEqual(set(MODULE_INPUTS), set(CALCULATORS))
@@ -55,10 +56,32 @@ class TestMainIntegration(unittest.TestCase):
         result = calculate(values, CALCULATORS["Module C"](), "Module C")
         self.assertEqual(result, "[1, 2, 3, 4] mean = 2.5")
 
+    def test_module_d_graph(self):
+        class FakeGraph:
+            def erase(self):
+                pass
+
+            def draw_line(self, *args, **kwargs):
+                pass
+
+            def draw_circle(self, *args, **kwargs):
+                pass
+
+            def draw_text(self, *args, **kwargs):
+                pass
+
+        values = {
+            "-FIRST-": "(1, 2, 3)",
+            "-SECOND-": "(10, 20, 30)",
+        }
+        result = draw_graph(values, CALCULATORS["Module D"](), FakeGraph())
+        self.assertEqual(result, "Graph drawn with 3 point(s)")
+
     def test_operations_are_registered_for_each_module(self):
         self.assertEqual(len(MODULE_OPERATIONS["Module A"]), 6)
         self.assertEqual(len(MODULE_OPERATIONS["Module B"]), 7)
         self.assertEqual(len(MODULE_OPERATIONS["Module C"]), 8)
+        self.assertEqual(len(MODULE_OPERATIONS["Module D"]), 1)
 
 
 if __name__ == "__main__":

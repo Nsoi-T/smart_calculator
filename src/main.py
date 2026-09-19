@@ -3,6 +3,7 @@ import PySimpleGUI as sg
 from module_a.calculator_basic import BasicCalculator
 from module_b.calculator_advanced import AdvancedCalculator
 from module_c.calculator_stats import StatisticalCalculator
+from module_d.graph import Graph
 
 
 MODULE_OPERATIONS = {
@@ -33,30 +34,37 @@ MODULE_OPERATIONS = {
         "Maximum": ("max_value", "max", "list"),
         "Minimum": ("min_value", "min", "list"),
     },
+    "Module D": {
+        "Insert graph": ("insert_graph", "graph", "graph"),
+    },
 }
 
 CALCULATORS = {
     "Module A": BasicCalculator,
     "Module B": AdvancedCalculator,
     "Module C": StatisticalCalculator,
+    "Module D": Graph,
 }
 
 MODULE_BUTTONS = {
     "-MODULE-A-": "Module A",
     "-MODULE-B-": "Module B",
     "-MODULE-C-": "Module C",
+    "-MODULE-D-": "Module D",
 }
 
 MODULE_TITLES = {
     "Module A": "Module A - Basic Calculator",
     "Module B": "Module B - Advanced Calculator",
     "Module C": "Module C - Statistical Calculator",
+    "Module D": "Module D - Graph",
 }
 
 MODULE_INPUTS = {
     "Module A": ("First number", "Second number", True),
     "Module B": ("Number", "Second number", False),
     "Module C": ("Numbers\n(comma-separated)", "Second number", False),
+    "Module D": ("X values\n(comma-separated)", "Y values\n(comma-separated)", True),
 }
 
 
@@ -67,6 +75,7 @@ def _parse_number(value):
 
 
 def _parse_numbers(value):
+    value = value.strip().strip("()[]")
     return [_parse_number(item) for item in value.split(",") if item.strip()]
 
 
@@ -79,16 +88,24 @@ def create_window():
         [sg.Text("Module", size=(14, 1)),
          sg.Button("Module A", key="-MODULE-A-"),
          sg.Button("Module B", key="-MODULE-B-"),
-         sg.Button("Module C", key="-MODULE-C-")],
+         sg.Button("Module C", key="-MODULE-C-"),
+         sg.Button("Module D", key="-MODULE-D-")],
         [sg.Text("Input", size=(14, 2), key="-FIRST-LABEL-"),
          sg.Input(key="-FIRST-", expand_x=True)],
-        [sg.Text("Operation", size=(14, 1)), sg.Combo(
+        [sg.Text("Operation", size=(14, 1), key="-OPERATION-LABEL-"), sg.Combo(
             list(MODULE_OPERATIONS["Module A"]), default_value="Add (+)",
             readonly=True, key="-OPERATION-", expand_x=True)],
         [sg.Text("Second number", size=(14, 1), key="-SECOND-LABEL-"),
          sg.Input(key="-SECOND-", expand_x=True)],
-        [sg.Button("Calculate", bind_return_key=True),
+        [sg.Button("Calculate", key="-CALCULATE-", bind_return_key=True),
+         sg.Button("Insert Graph", key="-INSERT-GRAPH-", visible=False),
          sg.Button("Clear"), sg.Button("Exit")],
+        [sg.Column([
+            [sg.Graph((500, 300), (0, 0), (100, 100),
+                      background_color="white", key="-GRAPH-",
+                      visible=False,
+                      expand_x=True)],
+        ], key="-GRAPH-ROW-", visible=False, pad=(0, 0), expand_x=True)],
         [sg.HorizontalSeparator()],
         [sg.Text("Result", size=(14, 1)), sg.Text(
             "", key="-RESULT-", expand_x=True)],
@@ -109,6 +126,18 @@ def _select_module(window, module_name):
     window["-SECOND-"].update(visible=show_second, value="")
     window["-FIRST-"].update("")
     window["-RESULT-"].update("")
+    is_graph = module_name == "Module D"
+    window["-OPERATION-LABEL-"].update(visible=not is_graph)
+    window["-OPERATION-"].update(visible=not is_graph)
+    window["-CALCULATE-"].update(visible=not is_graph)
+    window["-INSERT-GRAPH-"].update(visible=is_graph)
+    window["-GRAPH-"].update(visible=is_graph)
+    window["-GRAPH-ROW-"].update(visible=is_graph)
+    if is_graph:
+        window["-GRAPH-ROW-"].unhide_row()
+    else:
+        window["-GRAPH-ROW-"].hide_row()
+    window.refresh()
 
 
 def calculate(values, calculator, module_name):
@@ -129,6 +158,14 @@ def calculate(values, calculator, module_name):
     second = _parse_number(values["-SECOND-"])
     result = getattr(calculator, method_name)(first, second)
     return f"{first} {symbol} {second} = {result}"
+
+
+def draw_graph(values, calculator, graph_element):
+    """Draw the graph using comma-separated X and Y values."""
+    x_values = _parse_numbers(values["-FIRST-"])
+    y_values = _parse_numbers(values["-SECOND-"])
+    calculator.insert_graph(graph_element, x_values, y_values)
+    return f"Graph drawn with {len(x_values)} point(s)"
 
 
 def run():
@@ -157,11 +194,14 @@ def run():
                 history.clear()
                 window["-HISTORY-"].update(history)
                 continue
-            if event != "Calculate":
-                continue
-
             try:
-                expression = calculate(values, calculator, module_name)
+                if event == "-INSERT-GRAPH-":
+                    expression = draw_graph(
+                        values, calculator, window["-GRAPH-"])
+                elif event == "-CALCULATE-":
+                    expression = calculate(values, calculator, module_name)
+                else:
+                    continue
             except (KeyError, TypeError, ValueError):
                 window["-RESULT-"].update(
                     "Please enter number to do operation", text_color="red")
