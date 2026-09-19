@@ -1,5 +1,5 @@
 class BasicCalculator:
-    """Basic calculator with common operations"""
+    """Basic calculator with common operations."""
 
     def __init__(self, logger=None):
         self.logger = logger
@@ -32,7 +32,7 @@ class BasicCalculator:
         return result
 
     def power(self, base, exponent):
-        result = base ** exponent
+        result = base**exponent
         self._log("power", (base, exponent), result)
         return result
 

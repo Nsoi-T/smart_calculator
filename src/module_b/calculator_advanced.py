@@ -1,57 +1,45 @@
-import math 
+import math
 
- 
 
-class AdvancedCalculator: 
+class AdvancedCalculator:
 
-    def square_root(self, x): 
+    def square_root(self, x):
 
-        if x < 0: 
+        if x < 0:
 
-            raise ValueError("Cannot calculate square root of negative number") 
+            raise ValueError("Cannot calculate square root of negative number")
 
-        return math.sqrt(x) 
+        return math.sqrt(x)
 
-     
+    def logarithm(self, x, base=10):
 
-    def logarithm(self, x, base=10): 
+        if x <= 0:
 
-        if x <= 0: 
+            raise ValueError("Logarithm undefined for non-positive numbers")
 
-            raise ValueError("Logarithm undefined for non-positive numbers") 
+        return math.log(x, base)
 
-        return math.log(x, base) 
+    def sine(self, angle_degrees):
 
-     
+        return math.sin(math.radians(angle_degrees))
 
-    def sine(self, angle_degrees): 
+    def cosine(self, angle_degrees):
 
-        return math.sin(math.radians(angle_degrees)) 
+        return math.cos(math.radians(angle_degrees))
 
-     
+    def tangent(self, angle_degrees):
 
-    def cosine(self, angle_degrees): 
+        return math.tan(math.radians(angle_degrees))
 
-        return math.cos(math.radians(angle_degrees)) 
+    def factorial(self, n):
 
-     
+        if n < 0 or not isinstance(n, int):
 
-    def tangent(self, angle_degrees): 
+            raise ValueError(
+                "Factorial only defined for non-negative integers")
 
-        return math.tan(math.radians(angle_degrees)) 
+        return math.factorial(n)
 
-     
+    def absolute(self, x):
 
-    def factorial(self, n): 
-
-        if n < 0 or not isinstance(n, int): 
-
-            raise ValueError("Factorial only defined for non-negative integers") 
-
-        return math.factorial(n) 
-
-     
-
-    def absolute(self, x): 
-
-        return abs(x) 
+        return abs(x)

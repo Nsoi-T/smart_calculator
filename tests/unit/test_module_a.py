@@ -1,97 +1,85 @@
-import unittest 
+# path handler
+import sys
+import os
 
-from src.module_a.calculator_basic import BasicCalculator 
+PROJECT_ROOT = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), "..", ".."))
+SRC_DIR = os.path.join(PROJECT_ROOT, "src")
 
- 
+for module_path in (PROJECT_ROOT, SRC_DIR):
+    if os.path.isdir(module_path) and module_path not in sys.path:
+        sys.path.insert(0, module_path)
 
-class TestBasicCalculator(unittest.TestCase): 
+# start of the unit test code
+import unittest
+from src.module_a.calculator_basic import BasicCalculator
 
-    """Test cases for Basic Calculator Module""" 
 
-     
+class TestBasicCalculator(unittest.TestCase):
+    """Test cases for Basic Calculator Module"""
 
-    def setUp(self): 
+    def setUp(self):
+        """Set up test fixture"""
 
-        """Set up test fixture""" 
+        self.calc = BasicCalculator()
 
-        self.calc = BasicCalculator() 
+    def test_add(self):
+        """Test addition operation"""
 
-     
+        self.assertEqual(self.calc.add(2, 3), 5)
 
-    def test_add(self): 
+        self.assertEqual(self.calc.add(-1, 1), 0)
 
-        """Test addition operation""" 
+        self.assertEqual(self.calc.add(0, 0), 0)
 
-        self.assertEqual(self.calc.add(2, 3), 5) 
+        self.assertEqual(self.calc.add(2.5, 3.5), 6.0)
 
-        self.assertEqual(self.calc.add(-1, 1), 0) 
+    def test_subtract(self):
+        """Test subtraction operation"""
 
-        self.assertEqual(self.calc.add(0, 0), 0) 
+        self.assertEqual(self.calc.subtract(5, 3), 2)
 
-        self.assertEqual(self.calc.add(2.5, 3.5), 6.0) 
+        self.assertEqual(self.calc.subtract(0, 5), -5)
 
-     
+        self.assertEqual(self.calc.subtract(-5, -3), -2)
 
-    def test_subtract(self): 
+    def test_multiply(self):
+        """Test multiplication operation"""
 
-        """Test subtraction operation""" 
+        self.assertEqual(self.calc.multiply(2, 3), 6)
 
-        self.assertEqual(self.calc.subtract(5, 3), 2) 
+        self.assertEqual(self.calc.multiply(0, 5), 0)
 
-        self.assertEqual(self.calc.subtract(0, 5), -5) 
+        self.assertEqual(self.calc.multiply(-2, 3), -6)
 
-        self.assertEqual(self.calc.subtract(-5, -3), -2) 
+    def test_divide(self):
+        """Test division operation"""
 
-     
+        self.assertEqual(self.calc.divide(6, 3), 2)
 
-    def test_multiply(self): 
+        self.assertEqual(self.calc.divide(5, 2), 2.5)
 
-        """Test multiplication operation""" 
+        self.assertRaises(ValueError, self.calc.divide, 5, 0)
 
-        self.assertEqual(self.calc.multiply(2, 3), 6) 
+    def test_power(self):
+        """Test power operation"""
 
-        self.assertEqual(self.calc.multiply(0, 5), 0) 
+        self.assertEqual(self.calc.power(2, 3), 8)
 
-        self.assertEqual(self.calc.multiply(-2, 3), -6) 
+        self.assertEqual(self.calc.power(5, 0), 1)
 
-     
+        self.assertEqual(self.calc.power(4, 0.5), 2)
 
-    def test_divide(self): 
+    def test_modulus(self):
+        """Test modulus operation"""
 
-        """Test division operation""" 
+        self.assertEqual(self.calc.modulus(7, 3), 1)
 
-        self.assertEqual(self.calc.divide(6, 3), 2) 
+        self.assertEqual(self.calc.modulus(10, 5), 0)
 
-        self.assertEqual(self.calc.divide(5, 2), 2.5) 
+        self.assertRaises(ValueError, self.calc.modulus, 5, 0)
 
-        self.assertRaises(ValueError, self.calc.divide, 5, 0) 
 
-     
+if __name__ == "__main__":
 
-    def test_power(self): 
-
-        """Test power operation""" 
-
-        self.assertEqual(self.calc.power(2, 3), 8) 
-
-        self.assertEqual(self.calc.power(5, 0), 1) 
-
-        self.assertEqual(self.calc.power(4, 0.5), 2) 
-
-     
-
-    def test_modulus(self): 
-
-        """Test modulus operation""" 
-
-        self.assertEqual(self.calc.modulus(7, 3), 1) 
-
-        self.assertEqual(self.calc.modulus(10, 5), 0) 
-
-        self.assertRaises(ValueError, self.calc.modulus, 5, 0) 
-
- 
-
-if __name__ == '__main__': 
-
-    unittest.main() 
+    unittest.main()

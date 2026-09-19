@@ -1,23 +1,41 @@
 # Smart Calculator Suite
 
-A modular calculator application with three specialized modules.
+A modular calculator application with basic, advanced, and statistical operations.
+
+## Requirements
+
+- Python 3.10 or later
+- PySimpleGUI 5.0 or later
 
 ## Installation
-pip install -r requirements.txt
 
-Running Tests
-# Run all tests
-python -m pytest tests/
+Install the project dependencies:
 
-# Run with coverage
-python -m pytest tests/ --cov=src
+```bash
+python -m pip install -r requirements.txt
+```
 
-# Run specific test file
-python -m pytest tests/unit/test_module_a.py
+## Run the Application
 
-Usage
-from src.main import SmartCalculator
+Start the graphical calculator:
 
-calc = SmartCalculator()
-result = calc.basic.add(5, 3)
-print(result)  # 8
+```bash
+python src/main.py
+```
+
+The calculator includes:
+
+- Basic arithmetic, powers, and modulus operations
+- Square roots, logarithms, trigonometric functions, factorials, and absolute values
+- Statistical calculations for comma-separated numbers
+- Operation history within the application
+
+## Running Tests
+
+Run the complete test suite:
+
+```bash
+python -m unittest discover -s tests -p "test*.py"
+```
+
+
