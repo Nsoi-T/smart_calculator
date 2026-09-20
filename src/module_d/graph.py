@@ -38,9 +38,6 @@ class Graph:
 			x_position = graph_left + index * step
 			graph.draw_text(
 				str(x_value), (x_position, max(2, x_axis - 4)), color="black")
-		for y_value in sorted(set(y_values)):
-			graph.draw_text(
-				str(y_value), (2, scale_y(y_value)), color="black")
 
 		for start, end in zip(scaled_points, scaled_points[1:]):
 			graph.draw_line(start, end, color="black", width=2)

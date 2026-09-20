@@ -80,8 +80,9 @@ class TestGraph(unittest.TestCase):
         labels = [text for text, _, _ in self.canvas.text]
         self.assertIn("X", labels)
         self.assertIn("1", labels)
-        self.assertIn("10", labels)
         self.assertIn("(1, 10)", labels)
+        self.assertNotIn("10", labels)
+        self.assertNotIn("20", labels)
 
     def test_empty_data_raises_error(self):
         with self.assertRaises(ValueError):
